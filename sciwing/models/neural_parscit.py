@@ -193,6 +193,20 @@ class NeuralParscit(nn.Module):
                 )
                 print(stylized_string)
             return prediction[0]
+    
+    def predict_for_batch(self, batch: List[str], show=True) -> List[str]:
+        predictions = self.infer.infer_batch(lines=batch)
+        for namespace, predictions in predictions.items():
+            if show:
+                for text, prediction in zip(batch, predictions):
+                    text = text.split()
+                    prediction = prediction.split()[: len(text)] # cut off the padding
+                    self.msg_printer.divider(f"Prediction for {namespace.upper()}")
+                    stylized_string = self.vis_tagger.visualize_tokens(
+                        text=text, labels=prediction
+                    )
+                    print(stylized_string)
+            return predictions
 
     def _get_data(self):
         data_manager = SeqLabellingDatasetManager(
