@@ -273,7 +273,10 @@ class Vocab:
         if not self.vocab:
             raise ValueError("Build vocab first by calling build_vocab()")
 
-        length = len(set(idx for freq, idx in self.vocab.values()))
+        if self.idx2token is not None:
+            length = len(self.idx2token)
+        else:
+            length = len(set(idx for freq, idx in self.vocab.values()))
         return length
 
     def get_orig_vocab_len(self) -> int:
