@@ -33,7 +33,11 @@ def tag_citation_batch(citations: List[str]):
     global parscit_model
     if parscit_model == None:
         parscit_model = NeuralParscit()
-    predictions = parscit_model.predict_for_batch(citations, show=False)
+    try:
+        predictions = parscit_model.predict_for_batch(citations, show=False)
+    except ValueError as e:
+        print(citations, e)
+        return [{"tags": "", "text_tokens": []} for _ in citations]
     return [{"tags": pred, "text_tokens": citation.split()} for pred, citation in zip(predictions, citations)]
 
 @router.get("/parscit/{citation}")
