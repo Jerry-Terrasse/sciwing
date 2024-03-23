@@ -22,14 +22,18 @@ def tag_citation_batch(citations: List[str]):
         ``{"tags": Predicted tags, "text_tokens": Tokenized citation string}``
 
     """
-    assert isinstance(citations, list)
-    assert len(citations) > 0
-    for citation in citations:
-        assert isinstance(citation, str)
+    try:
+        assert isinstance(citations, list)
+        assert len(citations) > 0
+        for citation in citations:
+            assert isinstance(citation, str)
+        assert ''.join(citations) != ''
+    except AssertionError:
+        return [{"tags": "", "text_tokens": []} for _ in citations] # return empty tags and tokens if input is invalid
     global parscit_model
     if parscit_model == None:
         parscit_model = NeuralParscit()
-    predictions = parscit_model.predict_for_batch(citations)
+    predictions = parscit_model.predict_for_batch(citations, show=False)
     return [{"tags": pred, "text_tokens": citation.split()} for pred, citation in zip(predictions, citations)]
 
 @router.get("/parscit/{citation}")
